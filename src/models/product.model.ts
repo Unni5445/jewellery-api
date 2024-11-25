@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
@@ -15,7 +15,8 @@ const productSchema = new mongoose.Schema(
     //   required: true,
     // },
     category: {
-      type: String,
+      type: Types.ObjectId,
+      ref:"Category",
       required: true,
     },
     images: [

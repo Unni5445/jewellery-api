@@ -30,14 +30,26 @@ class ProductController {
 
   // Get all products
   static getProducts = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
-    const products = await Product.find();
+    const products = await Product.find().populate('category');
     res.status(200).json(new ApiResponse(200,products));
   });
 
   // Get a single product by ID
   static getProductById = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate('category');
+
+    if (!product) {
+      res.status(404);
+      throw new Error("Product not found");
+    }
+
+    res.status(200).json(new ApiResponse(200,product));
+  });
+
+  static getProductByCategory = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
+    const { category } = req.params;
+    const product = await Product.findOne({category});
 
     if (!product) {
       res.status(404);
