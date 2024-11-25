@@ -98,6 +98,23 @@ class ProductController {
     res.status(200).json(new ApiResponse(200,categorys));
   });
 
+  static updateCategory = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
+    const { id } = req.params;
+    const data = req.body;
+    const updatedCategory = await Category.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedCategory) {
+      res.status(404);
+      throw new Error("Category not found");
+    }
+
+    res.status(200).json(new ApiResponse(200,{},"Category updated successfully"));
+  })
+
   static deleteCategory = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
     const { id } = req.params;
     const deletedCategory = await Category.findById(id)
@@ -106,7 +123,7 @@ class ProductController {
         throw new Error("Category not found");
     }
     await Bin.create({model:"Category",data:deletedCategory})
-    await Product.findByIdAndDelete(id);
+    await Category.findByIdAndDelete(id);
 
     res.status(200).json(new ApiResponse(200,{},"Category deleted successfully" ));
   });
