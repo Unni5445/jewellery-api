@@ -25,7 +25,6 @@ class ProductController {
 
     const newProduct = await Product.create({ ...data, images: imageUrls });
 
-    await  Product.create(data)
     res.status(201).json(new ApiResponse(200,{},"Product created successfully"));
   });
 
