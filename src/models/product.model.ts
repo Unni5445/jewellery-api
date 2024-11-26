@@ -14,6 +14,14 @@ const productSchema = new mongoose.Schema(
     //   type: Number,
     //   required: true,
     // },
+    size: {
+       type: String,
+       required: true,
+    },
+    weight: {
+       type: String,
+       required: true,
+    },
     category: {
       type: Types.ObjectId,
       ref:"Category",
