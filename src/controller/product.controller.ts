@@ -49,7 +49,7 @@ class ProductController {
 
   static getProductByCategory = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
     const { category } = req.params;
-    const product = await Product.findOne({category});
+    const product = await Product.find({category});
 
     if (!product) {
       res.status(404);
