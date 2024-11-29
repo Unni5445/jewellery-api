@@ -8,6 +8,7 @@ import errorHandler from './src/middleware/errorHandler'
 import cookieParser from 'cookie-parser'
 import productRouter from './src/routes/product.routes'
 import enquiryRouter from './src/routes/enquiry.routes'
+import authRouter from './src/routes/auth.routes'
 
 dotenv.config()
 const app = express()
@@ -36,7 +37,7 @@ app.use(express.urlencoded({extended:true}))
 app.get('/',(req,res)=>{
     res.send("hello guys")
 })
-app.use('/api/v1',productRouter,enquiryRouter)
+app.use('/api/v1',productRouter,enquiryRouter,authRouter)
 
 mongoose
   .connect(process.env.MONGO_DB!,)
