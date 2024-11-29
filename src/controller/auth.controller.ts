@@ -9,11 +9,12 @@ class AuthController {
 
   static createUser = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-      const data = req.body as { email:string,name:string};
+      const data = req.body as { email:string,name:string,password:string};
       const exitingUser = await User.findOne({email:data.email})
       if(exitingUser){
         return next(new ErrorResponse("Email already exiting",400))
       }
+      data.password = "Welcome123@"
       const newUser = await User.create(data)
       res.status(200).json(new ApiResponse(200,{},"User created successfully"))
     }
