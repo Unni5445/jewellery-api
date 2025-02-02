@@ -60,30 +60,39 @@ class ProductController {
   });
 
   // Update a product
-  static updateProduct = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
+  static updateProduct = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const data = req.body;
-    if(req.files){
-      const imageUrls = await Promise.all(
+
+    // Fetch the existing product
+    const existingProduct = await Product.findById(id);
+    if (!existingProduct) {
+      res.status(404);
+      throw new Error("Product not found");
+    }
+
+    // If new images are uploaded, merge them with existing images
+    if (req.files) {
+      const newImageUrls = await Promise.all(
         (req.files as Express.Multer.File[]).map(async (file) => {
-          return uploadFileToAzure(file.buffer, file.originalname); 
+          return uploadFileToAzure(file.buffer, file.originalname);
         })
       );
-      data.images = imageUrls
+      data.images = [...existingProduct.images, ...newImageUrls]; // Merge old + new images
+    } else {
+      data.images = existingProduct.images; // Keep old images if no new ones are uploaded
     }
+
+    // Update the product
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       { $set: data },
       { new: true, runValidators: true }
     );
 
-    if (!updatedProduct) {
-      res.status(404);
-      throw new Error("Product not found");
-    }
+    res.status(200).json(new ApiResponse(200, updatedProduct, "Product updated successfully"));
+});
 
-    res.status(200).json(new ApiResponse(200,{},"Product updated successfully"));
-  });
 
   // Delete a product
   static deleteProduct = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
